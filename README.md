@@ -682,3 +682,9 @@ RESULT:
 ![](assets/images/posts/README/image2.png)
 
 It's important to note that since the default parameters are used for the models, It is difficult to decide which classifier is the best one. Each algorithm should be analyzed carefully and the optimal parameters should be selected to have better performance.
+
+
+
+You can download the notebook [here](https://github.com/ruslanmv/The-best-binary-Machine-Learning-Model/blob/master/Binary%20Classification%20-%20Machine%20Learning.ipynb)
+
+**Congratulations!** You have reviewed some binary classification models.
