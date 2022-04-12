@@ -368,10 +368,6 @@ import matplotlib.pyplot as plt
 from sklearn.datasets import load_breast_cancer
 
 dataset = load_breast_cancer()
-sns.set_style('dark')
-import matplotlib as mpl
-mpl.style.use(['https://gist.githubusercontent.com/BrendanMartin/01e71bb9550774e2ccff3af7574c0020/raw/6fa9681c7d0232d34c9271de9be150e584e606fe/lds_default.mplstyle'])
-mpl.rcParams.update({"figure.figsize": (8,6), "axes.titlepad": 22.0})
 ```
 
 We'll print the target variable, target names, and frequency of each unique value:
@@ -403,7 +399,7 @@ plt.show()
 
 RESULT:
 
-![img](assets/images/posts/README/breast-cancer-target-variable-counts-plot.width-1200.png)
+![](assets/images/posts/README/image1.png)
 
 In this dataset, we have two classes: *malignant* denoted as 0 and *benign* denoted as 1, making this a binary classification problem.
 
@@ -541,6 +537,113 @@ for key in models.keys():
     recall[key] = recall_score(predictions, y_test)
 ```
 
+
+
+
+
+```
+# Neural Networks
+from keras.models import Sequential
+from keras.layers import Dense
+
+model = Sequential() 
+model.add(Dense(128, activation='relu', input_dim=30))
+model.add(Dense(1, activation='sigmoid')) 
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']) 
+model.summary()
+```
+
+
+
+```
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense (Dense)                (None, 128)               3968      
+_________________________________________________________________
+dense_1 (Dense)              (None, 1)                 129       
+=================================================================
+Total params: 4,097
+Trainable params: 4,097
+Non-trainable params: 0
+___________________________
+```
+
+```
+hist = model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=10, batch_size=100)
+```
+
+
+
+```
+Epoch 1/10
+5/5 [==============================] - 2s 40ms/step - loss: 0.4963 - accuracy: 0.8873 - val_loss: 0.3877 - val_accuracy: 0.9091
+Epoch 2/10
+5/5 [==============================] - 0s 13ms/step - loss: 0.3544 - accuracy: 0.9413 - val_loss: 0.2924 - val_accuracy: 0.9091
+Epoch 3/10
+5/5 [==============================] - 0s 13ms/step - loss: 0.2686 - accuracy: 0.9507 - val_loss: 0.2355 - val_accuracy: 0.9231
+Epoch 4/10
+5/5 [==============================] - 0s 13ms/step - loss: 0.2139 - accuracy: 0.9601 - val_loss: 0.2003 - val_accuracy: 0.9231
+Epoch 5/10
+5/5 [==============================] - 0s 12ms/step - loss: 0.1795 - accuracy: 0.9648 - val_loss: 0.1781 - val_accuracy: 0.9301
+Epoch 6/10
+5/5 [==============================] - 0s 12ms/step - loss: 0.1563 - accuracy: 0.9648 - val_loss: 0.1630 - val_accuracy: 0.9301
+Epoch 7/10
+5/5 [==============================] - 0s 12ms/step - loss: 0.1407 - accuracy: 0.9624 - val_loss: 0.1515 - val_accuracy: 0.9371
+Epoch 8/10
+5/5 [==============================] - 0s 10ms/step - loss: 0.1284 - accuracy: 0.9624 - val_loss: 0.1426 - val_accuracy: 0.9371
+Epoch 9/10
+5/5 [==============================] - 0s 11ms/step - loss: 0.1191 - accuracy: 0.9671 - val_loss: 0.1353 - val_accuracy: 0.9371
+Epoch 10/10
+5/5 [==============================] - 0s 11ms/step - loss: 0.1118 - accuracy: 0.9742 - val_loss: 0.1291 - val_accuracy: 0.9371
+```
+
+```
+import seaborn as sns
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+sns.set()
+acc = hist.history['accuracy']
+val = hist.history['val_accuracy']
+epochs = range(1, len(acc) + 1)
+
+plt.plot(epochs, acc, '-', label='Training accuracy')
+plt.plot(epochs, val, ':', label='Validation accuracy')
+plt.title('Training and Validation Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend(loc='lower right')
+plt.plot()
+```
+
+
+
+
+
+![](assets/images/posts/README/net.png)
+
+A typical accuracy score computed by divding the sum of the true positives and true negatives by the number of test samples isn't very helpful because the dataset is so imbalanced. Use a confusion matrix to visualize how the model performs during testing.
+
+```
+from sklearn.metrics import confusion_matrix
+
+y_predicted = model.predict(X_test) > 0.5
+mat = confusion_matrix(y_test, y_predicted)
+labels = ['malignant', 'benign']
+
+sns.heatmap(mat, square=True, annot=True, fmt='d', cbar=False, cmap='Blues',
+            xticklabels=labels, yticklabels=labels)
+
+plt.xlabel('Predicted label')
+plt.ylabel('Actual label')
+```
+
+![](assets/images/posts/README/chart.png)
+
+
+
 With all metrics stored, we can use the [pandas library](https://www.learndatasci.com/tutorials/python-pandas-tutorial-complete-introduction-for-beginners/) to view the data as a table:
 
 ```python
@@ -564,6 +667,7 @@ OUT:
 | Random Forest           | 0.965035 | 0.966667  | 0.977528 |
 | Naive Bayes             | 0.916084 | 0.933333  | 0.933333 |
 | K-Nearest Neigbor       | 0.951049 | 0.988889  | 0.936842 |
+| Neural Network          | 0.9371   |           |          |
 
 Finally, here's a quick bar chart to compare the classifiers performance:
 
@@ -575,6 +679,6 @@ plt.tight_layout()
 
 RESULT:
 
-![img](assets/images/posts/README/sklearn-binary-classifier-comparison.width-1200.png)
+![](assets/images/posts/README/image2.png)
 
 It's important to note that since the default parameters are used for the models, It is difficult to decide which classifier is the best one. Each algorithm should be analyzed carefully and the optimal parameters should be selected to have better performance.
